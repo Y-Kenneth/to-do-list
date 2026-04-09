@@ -11,6 +11,12 @@
 		CB189DE52F7DF7B3001D6A89 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB189DE42F7DF7B3001D6A89 /* ContentView.swift */; };
 		CB189DE72F7DF7BE001D6A89 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB189DE62F7DF7BE001D6A89 /* Assets.xcassets */; };
 		CB189DEA2F7DF7BE001D6A89 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB189DE92F7DF7BE001D6A89 /* Preview Assets.xcassets */; };
+		CB189DF52F7DF906001D6A89 /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB189DF42F7DF906001D6A89 /* TodoItem.swift */; };
+		CB189DF72F7DF917001D6A89 /* TodoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB189DF62F7DF917001D6A89 /* TodoViewModel.swift */; };
+		CB189DF92F7DF927001D6A89 /* TaskRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB189DF82F7DF927001D6A89 /* TaskRowView.swift */; };
+		CB189DFB2F7DF932001D6A89 /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB189DFA2F7DF932001D6A89 /* AddTaskView.swift */; };
+		CB189DFD2F7DFBB1001D6A89 /* TaskDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB189DFC2F7DFBB1001D6A89 /* TaskDetailView.swift */; };
+		CB189E002F7DFE2D001D6A89 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB189DFF2F7DFE2D001D6A89 /* AppColors.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +25,12 @@
 		CB189DE42F7DF7B3001D6A89 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		CB189DE62F7DF7BE001D6A89 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CB189DE92F7DF7BE001D6A89 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		CB189DF42F7DF906001D6A89 /* TodoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoItem.swift; sourceTree = "<group>"; };
+		CB189DF62F7DF917001D6A89 /* TodoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoViewModel.swift; sourceTree = "<group>"; };
+		CB189DF82F7DF927001D6A89 /* TaskRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRowView.swift; sourceTree = "<group>"; };
+		CB189DFA2F7DF932001D6A89 /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
+		CB189DFC2F7DFBB1001D6A89 /* TaskDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailView.swift; sourceTree = "<group>"; };
+		CB189DFF2F7DFE2D001D6A89 /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColors.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,8 +63,11 @@
 		CB189DE12F7DF7B3001D6A89 /* to-do-list */ = {
 			isa = PBXGroup;
 			children = (
-				CB189DE22F7DF7B3001D6A89 /* to_do_listApp.swift */,
-				CB189DE42F7DF7B3001D6A89 /* ContentView.swift */,
+				CB189DFE2F7DFE1B001D6A89 /* Utilities */,
+				CB189DF32F7DF8EA001D6A89 /* ViewModels */,
+				CB189DF22F7DF8E5001D6A89 /* Models */,
+				CB189DF12F7DF8D8001D6A89 /* Apps */,
+				CB189DF02F7DF8C0001D6A89 /* Views */,
 				CB189DE62F7DF7BE001D6A89 /* Assets.xcassets */,
 				CB189DE82F7DF7BE001D6A89 /* Preview Content */,
 			);
@@ -65,6 +80,49 @@
 				CB189DE92F7DF7BE001D6A89 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		CB189DF02F7DF8C0001D6A89 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CB189DE42F7DF7B3001D6A89 /* ContentView.swift */,
+				CB189DF82F7DF927001D6A89 /* TaskRowView.swift */,
+				CB189DFA2F7DF932001D6A89 /* AddTaskView.swift */,
+				CB189DFC2F7DFBB1001D6A89 /* TaskDetailView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CB189DF12F7DF8D8001D6A89 /* Apps */ = {
+			isa = PBXGroup;
+			children = (
+				CB189DE22F7DF7B3001D6A89 /* to_do_listApp.swift */,
+			);
+			path = Apps;
+			sourceTree = "<group>";
+		};
+		CB189DF22F7DF8E5001D6A89 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				CB189DF42F7DF906001D6A89 /* TodoItem.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		CB189DF32F7DF8EA001D6A89 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				CB189DF62F7DF917001D6A89 /* TodoViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		CB189DFE2F7DFE1B001D6A89 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				CB189DFF2F7DFE2D001D6A89 /* AppColors.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,7 +195,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CB189DFD2F7DFBB1001D6A89 /* TaskDetailView.swift in Sources */,
+				CB189DF92F7DF927001D6A89 /* TaskRowView.swift in Sources */,
+				CB189DF72F7DF917001D6A89 /* TodoViewModel.swift in Sources */,
 				CB189DE52F7DF7B3001D6A89 /* ContentView.swift in Sources */,
+				CB189DFB2F7DF932001D6A89 /* AddTaskView.swift in Sources */,
+				CB189E002F7DFE2D001D6A89 /* AppColors.swift in Sources */,
+				CB189DF52F7DF906001D6A89 /* TodoItem.swift in Sources */,
 				CB189DE32F7DF7B3001D6A89 /* to_do_listApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
