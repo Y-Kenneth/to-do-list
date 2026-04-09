@@ -6,9 +6,9 @@ A simple iOS To-Do List application built with **SwiftUI** as a learning project
 
 ## 📱 Screenshots
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/2cd66314-2878-41fa-8134-38fa9a884952" width="300"/>
-  <img src="https://github.com/user-attachments/assets/aebadb45-3362-4de7-8827-511e88053db1" width="300"/>
-  <img src="https://github.com/user-attachments/assets/f48edb18-a18a-436e-95e9-26099f565ed1" width="300"/>
+  <img src="https://github.com/user-attachments/assets/2cd66314-2878-41fa-8134-38fa9a884952" width="220"/>
+  <img src="https://github.com/user-attachments/assets/aebadb45-3362-4de7-8827-511e88053db1" width="220"/>
+  <img src="https://github.com/user-attachments/assets/f48edb18-a18a-436e-95e9-26099f565ed1" width="220"/>
 </p>
 
 ---
