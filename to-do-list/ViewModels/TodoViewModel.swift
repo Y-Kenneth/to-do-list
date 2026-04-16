@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import FirebaseFirestore
 
 // MARK: - Filter Enum
 
@@ -39,18 +40,38 @@ enum TaskSort: String, CaseIterable {
 // Any @Published property change automatically triggers a view re-render.
 class TodoViewModel: ObservableObject {
 
-    @Published var items: [TodoItem] = [] {
-        didSet { save() }
-    }
+    @Published var items: [TodoItem] = []
 
     @Published var searchText: String = ""
     @Published var activeFilter: TaskFilter = .all
     @Published var activeSort: TaskSort = .dateCreated
 
-    private let storageKey = "todo_items_v2"
+    private var db = Firestore.firestore()
+    private var listener: ListenerRegistration?
 
-    init() {
-        load()
+    init() {}
+
+    // MARK: - Real-time Listener
+
+    func startListening() {
+        listener = db.collection("todos")
+            .order(by: "createdAt", descending: true)
+            .addSnapshotListener { [weak self] snapshot, error in
+                guard let self = self else { return }
+                if let error = error {
+                    print("Firestore error: \(error.localizedDescription)")
+                    return
+                }
+                guard let documents = snapshot?.documents else { return }
+                self.items = documents.compactMap { doc in
+                    try? doc.data(as: TodoItem.self)
+                }
+            }
+    }
+
+    func stopListening() {
+        listener?.remove()
+        listener = nil
     }
 
     // MARK: - Filtered & Sorted Items
@@ -60,9 +81,9 @@ class TodoViewModel: ObservableObject {
 
         // 1. Apply filter
         switch activeFilter {
-        case .all:       break
-        case .pending:   result = result.filter { !$0.isCompleted }
-        case .completed: result = result.filter {  $0.isCompleted }
+            case .all:       break
+            case .pending:   result = result.filter { !$0.isCompleted }
+            case .completed: result = result.filter {  $0.isCompleted }
         }
 
         // 2. Apply search
@@ -76,21 +97,21 @@ class TodoViewModel: ObservableObject {
 
         // 3. Apply sort
         switch activeSort {
-        case .dateCreated:
-            result.sort { $0.createdAt > $1.createdAt }
-        case .dueDate:
-            result.sort { item1, item2 in
-                switch (item1.dueDate, item2.dueDate) {
-                case (nil, nil):   return item1.createdAt > item2.createdAt
-                case (nil, _):     return false
-                case (_, nil):     return true
-                case let (d1?, d2?): return d1 < d2
+            case .dateCreated:
+                result.sort { $0.createdAt > $1.createdAt }
+            case .dueDate:
+                result.sort { item1, item2 in
+                    switch (item1.dueDate, item2.dueDate) {
+                        case (nil, nil):   return item1.createdAt > item2.createdAt
+                        case (nil, _):     return false
+                        case (_, nil):     return true
+                        case let (d1?, d2?): return d1 < d2
+                    }
                 }
-            }
-        case .priority:
-            result.sort { $0.priority < $1.priority }
-        case .alphabetical:
-            result.sort { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+            case .priority:
+                result.sort { $0.priority < $1.priority }
+            case .alphabetical:
+                result.sort { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
         }
 
         return result
@@ -100,32 +121,40 @@ class TodoViewModel: ObservableObject {
 
     func addItem(title: String, note: String, priority: TodoItem.Priority, dueDate: Date? = nil) {
         let newItem = TodoItem(title: title, note: note, priority: priority, dueDate: dueDate)
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-            items.insert(newItem, at: 0)
+        do {
+            try db.collection("todos").addDocument(from: newItem)
+        } catch {
+            print("Error adding item: \(error.localizedDescription)")
         }
     }
 
     // MARK: - Delete
 
     func deleteItem(_ item: TodoItem) {
-        withAnimation(.easeInOut(duration: 0.3)) {
-            items.removeAll { $0.id == item.id }
+        guard let id = item.id else { return }
+        db.collection("todos").document(id).delete { error in
+            if let error = error {
+                print("Error deleting item: \(error.localizedDescription)")
+            }
         }
     }
 
     func deleteItems(at offsets: IndexSet, from list: [TodoItem]) {
         for index in offsets {
             let itemToDelete = list[index]
-            items.removeAll { $0.id == itemToDelete.id }
+            deleteItem(itemToDelete)
         }
     }
 
     // MARK: - Toggle Completion
 
     func toggleCompletion(for item: TodoItem) {
-        if let idx = items.firstIndex(where: { $0.id == item.id }) {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                items[idx].isCompleted.toggle()
+        guard let id = item.id else { return }
+        db.collection("todos").document(id).updateData([
+            "isCompleted": !item.isCompleted
+        ]) { error in
+            if let error = error {
+                print("Error toggling completion: \(error.localizedDescription)")
             }
         }
     }
@@ -133,10 +162,11 @@ class TodoViewModel: ObservableObject {
     // MARK: - Update
 
     func updateItem(_ updated: TodoItem) {
-        if let idx = items.firstIndex(where: { $0.id == updated.id }) {
-            withAnimation {
-                items[idx] = updated
-            }
+        guard let id = updated.id else { return }
+        do {
+            try db.collection("todos").document(id).setData(from: updated)
+        } catch {
+            print("Error updating item: \(error.localizedDescription)")
         }
     }
 
@@ -162,25 +192,5 @@ class TodoViewModel: ObservableObject {
 
     var dueTodayCount: Int {
         pendingItems.filter { $0.dueStatus == .dueToday }.count
-    }
-
-    // MARK: - Persistence
-
-    private func save() {
-        if let encoded = try? JSONEncoder().encode(items) {
-            UserDefaults.standard.set(encoded, forKey: storageKey)
-        }
-    }
-
-    private func load() {
-        // Try v2 key first, then migrate from v1
-        if let data = UserDefaults.standard.data(forKey: storageKey),
-           let decoded = try? JSONDecoder().decode([TodoItem].self, from: data) {
-            items = decoded
-        } else if let data = UserDefaults.standard.data(forKey: "todo_items_v1"),
-                  let decoded = try? JSONDecoder().decode([TodoItem].self, from: data) {
-            items = decoded
-            save() // re-save under new key
-        }
     }
 }

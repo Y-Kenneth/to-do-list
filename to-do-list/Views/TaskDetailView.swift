@@ -195,8 +195,7 @@ struct TaskDetailView: View {
                                         value: isCompleted ? "Completed" : "In Progress")
                             Divider()
                             metadataRow(icon: "tag", label: "ID",
-                                        value: item.id.uuidString.prefix(8).uppercased()
-                                            .description)
+                                        value: String(item.id?.prefix(8) ?? "N/A").uppercased())
                         }
                     }
 

@@ -27,6 +27,12 @@ struct ContentView: View {
                     .padding(.bottom, 32)
             }
             .navigationBarHidden(true)
+            .onAppear {
+                viewModel.startListening()
+            }
+            .onDisappear {
+                viewModel.stopListening()
+            }
         }
         .navigationViewStyle(.stack)
         .sheet(isPresented: $showAddSheet) {

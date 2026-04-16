@@ -1,9 +1,10 @@
 import Foundation
+import FirebaseFirestore
 
 // Identifiable    → lets ForEach/List track each item uniquely
 // Codable         → lets us encode/decode for UserDefaults persistence
 struct TodoItem: Identifiable, Codable, Equatable {
-    var id: UUID = UUID()
+    @DocumentID var id: String?    // Firestore will auto-generate this
     var title: String
     var note: String
     var priority: Priority
@@ -18,34 +19,34 @@ struct TodoItem: Identifiable, Codable, Equatable {
 
         var emoji: String {
             switch self {
-            case .low:    return "🌿"
-            case .medium: return "⚡️"
-            case .high:   return "🔥"
+                case .low:    return "🌿"
+                case .medium: return "⚡️"
+                case .high:   return "🔥"
             }
         }
 
         var systemImage: String {
             switch self {
-            case .low:    return "arrow.down.circle.fill"
-            case .medium: return "minus.circle.fill"
-            case .high:   return "exclamationmark.circle.fill"
+                case .low:    return "arrow.down.circle.fill"
+                case .medium: return "minus.circle.fill"
+                case .high:   return "exclamationmark.circle.fill"
             }
         }
 
         var color: String {
             switch self {
-            case .low:    return "#34C759"   // Apple green
-            case .medium: return "#FF9F0A"   // Apple orange
-            case .high:   return "#FF453A"   // Apple red
+                case .low:    return "#34C759"   // Apple green
+                case .medium: return "#FF9F0A"   // Apple orange
+                case .high:   return "#FF453A"   // Apple red
             }
         }
 
         // Comparable conformance for sorting
         private var sortOrder: Int {
             switch self {
-            case .high:   return 0
-            case .medium: return 1
-            case .low:    return 2
+                case .high:   return 0
+                case .medium: return 1
+                case .low:    return 2
             }
         }
 
