@@ -132,6 +132,37 @@ TodoViewModel (@ObservableObject)
 
 ---
 
+## 🔥 Learning Journey: Firebase Integration
+
+This project started with **UserDefaults** for local storage, then evolved to use **Firebase Firestore** as I learned cloud-based persistence:
+
+1. **Local-first** — initial version stored tasks in `UserDefaults` with `Codable` serialization
+2. **Cloud migration** — replaced local storage with Firestore, learning document-based NoSQL data modeling
+3. **Real-time listeners** — implemented `addSnapshotListener()` so changes sync instantly across sessions without manual refresh
+4. **Codable + Firestore** — used `FirebaseFirestoreSwift` to map Swift structs directly to Firestore documents with `@DocumentID`
+
+### Key Firebase takeaways
+- Firestore's real-time listeners eliminate the need for manual data fetching — the UI updates automatically
+- `[weak self]` in listener closures is critical to avoid retain cycles
+- Structuring data as flat documents (rather than nested) keeps queries simple and performant
+
+---
+
+## 🤖 Learning Journey: MCP (Model Context Protocol)
+
+During development, I explored **MCP** — a protocol that connects AI tools like [Claude Code](https://claude.ai/claude-code) to external services:
+
+1. **GitHub MCP Server** — connected Claude Code to GitHub via the `@modelcontextprotocol/server-github` package, enabling AI-assisted repository management directly from the IDE
+2. **VS Code integration** — configured MCP servers through `.vscode/mcp.json` for project-level setup
+3. **Claude Code CLI** — learned to register MCP servers using `claude mcp add` for CLI-level access
+
+### Key MCP takeaways
+- MCP servers act as bridges between AI assistants and external APIs (GitHub, databases, etc.)
+- VS Code (`.vscode/mcp.json`) and Claude Code CLI (`claude mcp add`) have **separate** configurations — both need to be set up independently
+- Personal access tokens should **never** be committed to version control — always add config files containing secrets to `.gitignore`
+
+---
+
 ## 📄 License
 
-This project is for educational purposes. Feel free to use it as a reference for learning SwiftUI and Firebase integration.
+This project is for educational purposes. Feel free to use it as a reference for learning SwiftUI, Firebase integration, and MCP configuration.
