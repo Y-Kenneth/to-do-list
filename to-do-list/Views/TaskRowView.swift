@@ -20,26 +20,26 @@ struct TaskRowView: View {
         HStack(spacing: 14) {
 
             // ── Completion Toggle ──
-            Button(action: onToggle) {
-                ZStack {
-                    Circle()
-                        .stroke(item.isCompleted ? Color.appAccent : Color.appBorder,
-                                lineWidth: 2)
-                        .frame(width: 26, height: 26)
+            ZStack {
+                Circle()
+                    .stroke(item.isCompleted ? Color.appAccent : Color.appBorder,
+                            lineWidth: 2)
+                    .frame(width: 26, height: 26)
 
-                    if item.isCompleted {
-                        Circle()
-                            .fill(Color.appAccent)
-                            .frame(width: 26, height: 26)
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.white)
-                            .transition(.scale.combined(with: .opacity))
-                    }
+                if item.isCompleted {
+                    Circle()
+                        .fill(Color.appAccent)
+                        .frame(width: 26, height: 26)
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.white)
+                        .transition(.scale.combined(with: .opacity))
                 }
-                .animation(.spring(response: 0.3, dampingFraction: 0.6), value: item.isCompleted)
             }
-            .buttonStyle(PlainButtonStyle())
+            .frame(width: 44, height: 44)
+            .contentShape(Rectangle())
+            .onTapGesture { onToggle() }
+            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: item.isCompleted)
 
             // ── Content Column ──
             VStack(alignment: .leading, spacing: 4) {
