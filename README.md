@@ -95,7 +95,7 @@ to-do-list/
 
 | Tool | Version |
 |---|---|
-| Xcode | 15.0+ |
+| Xcode | 14.3.1+ |
 | Swift | 5.0+ |
 | iOS Deployment Target | 16.4+ |
 | macOS | Ventura 13.x or later |
