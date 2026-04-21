@@ -2,13 +2,18 @@
 #
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
 
-.vscode/mcp.json
+# VS Code workspace (contains MCP configs with secrets)
+.vscode/
+
+# Claude Code local settings
+.claude/
 
 # Downloads folder
 to-do-list/Downloads/
 
 # Firebase credentials
 GoogleService-Info.plist
+to-do-list/secrets/
 
 ## User settings
 xcuserdata/

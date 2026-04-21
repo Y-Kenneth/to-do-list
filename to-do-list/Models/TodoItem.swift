@@ -5,6 +5,7 @@ import FirebaseFirestore
 // Codable         → lets us encode/decode for UserDefaults persistence
 struct TodoItem: Identifiable, Codable, Equatable {
     @DocumentID var id: String?    // Firestore will auto-generate this
+    var userId: String = ""        // Firebase Auth UID - links task to owner
     var title: String
     var note: String
     var priority: Priority

@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import FirebaseFirestore
+import FirebaseAuth
 
 // MARK: - Filter Enum
 
@@ -51,10 +52,27 @@ class TodoViewModel: ObservableObject {
 
     init() {}
 
-    // MARK: - Real-time Listener
+    deinit {
+        listener?.remove()
+    }
+
+    // MARK: - Real-time Listener (scoped to current user)
 
     func startListening() {
+        // Remove any previous listener WITHOUT clearing items
+        // (clearing causes the UI's List to disappear briefly,
+        //  which breaks NavigationLinks mid-navigation)
+        listener?.remove()
+        listener = nil
+
+        guard let uid = Auth.auth().currentUser?.uid else {
+            // Only clear if truly not signed in
+            self.items = []
+            return
+        }
+
         listener = db.collection("todos")
+            .whereField("userId", isEqualTo: uid)
             .order(by: "createdAt", descending: true)
             .addSnapshotListener { [weak self] snapshot, error in
                 guard let self = self else { return }
@@ -63,8 +81,15 @@ class TodoViewModel: ObservableObject {
                     return
                 }
                 guard let documents = snapshot?.documents else { return }
-                self.items = documents.compactMap { doc in
+                let newItems = documents.compactMap { doc in
                     try? doc.data(as: TodoItem.self)
+                }
+                // Only publish update if contents actually changed.
+                // This prevents spurious re-renders that can dismiss
+                // a pushed detail view (SwiftUI NavigationLink quirk).
+                DispatchQueue.main.async {
+                    guard self.items != newItems else { return }
+                    self.items = newItems
                 }
             }
     }
@@ -72,6 +97,7 @@ class TodoViewModel: ObservableObject {
     func stopListening() {
         listener?.remove()
         listener = nil
+        self.items = []
     }
 
     // MARK: - Filtered & Sorted Items
@@ -120,10 +146,32 @@ class TodoViewModel: ObservableObject {
     // MARK: - Add
 
     func addItem(title: String, note: String, priority: TodoItem.Priority, dueDate: Date? = nil) {
-        let newItem = TodoItem(title: title, note: note, priority: priority, dueDate: dueDate)
+        guard let uid = Auth.auth().currentUser?.uid else {
+            print("Cannot add item: not signed in")
+            return
+        }
+
+        // Generate a Firestore document reference locally (creates a valid ID without a network call)
+        let docRef = db.collection("todos").document()
+
+        var newItem = TodoItem(
+            userId: uid,
+            title: title,
+            note: note,
+            priority: priority,
+            dueDate: dueDate
+        )
+        newItem.id = docRef.documentID
+
+        // Optimistic UI update — insert locally so the task appears instantly
+        items.insert(newItem, at: 0)
+
+        // Write to Firestore using the same ID; listener will reconcile
         do {
-            try db.collection("todos").addDocument(from: newItem)
+            try docRef.setData(from: newItem)
         } catch {
+            // Rollback on error
+            items.removeAll { $0.id == newItem.id }
             print("Error adding item: \(error.localizedDescription)")
         }
     }
@@ -132,6 +180,11 @@ class TodoViewModel: ObservableObject {
 
     func deleteItem(_ item: TodoItem) {
         guard let id = item.id else { return }
+
+        // Optimistic UI update — remove locally first for instant feedback
+        items.removeAll { $0.id == item.id }
+
+        // Then delete from Firestore
         db.collection("todos").document(id).delete { error in
             if let error = error {
                 print("Error deleting item: \(error.localizedDescription)")
@@ -150,8 +203,16 @@ class TodoViewModel: ObservableObject {
 
     func toggleCompletion(for item: TodoItem) {
         guard let id = item.id else { return }
+        let newValue = !item.isCompleted
+
+        // Optimistic UI update — toggle locally first for instant feedback
+        if let idx = items.firstIndex(where: { $0.id == item.id }) {
+            items[idx].isCompleted = newValue
+        }
+
+        // Then update Firestore; listener will sync the final state
         db.collection("todos").document(id).updateData([
-            "isCompleted": !item.isCompleted
+            "isCompleted": newValue
         ]) { error in
             if let error = error {
                 print("Error toggling completion: \(error.localizedDescription)")

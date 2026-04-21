@@ -17,6 +17,9 @@
 		CB189DFB2F7DF932001D6A89 /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB189DFA2F7DF932001D6A89 /* AddTaskView.swift */; };
 		CB189DFD2F7DFBB1001D6A89 /* TaskDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB189DFC2F7DFBB1001D6A89 /* TaskDetailView.swift */; };
 		CB189E002F7DFE2D001D6A89 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB189DFF2F7DFE2D001D6A89 /* AppColors.swift */; };
+		CB602D8C2F9741C60095B158 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = CB602D8B2F9741C60095B158 /* FirebaseAuth */; };
+		CB6033CE2F9746B90095B158 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6033CD2F9746B90095B158 /* LoginView.swift */; };
+		CB6033D02F9746D50095B158 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6033CF2F9746D50095B158 /* AuthViewModel.swift */; };
 		CBADA39B2F8F586300A5313A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CBADA39A2F8F586200A5313A /* GoogleService-Info.plist */; };
 		CBADA3A32F8F618B00A5313A /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = CBADA3A22F8F618B00A5313A /* FirebaseFirestore */; };
 		CBADA3A52F8F618B00A5313A /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = CBADA3A42F8F618B00A5313A /* FirebaseFirestoreSwift */; };
@@ -34,6 +37,8 @@
 		CB189DFA2F7DF932001D6A89 /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
 		CB189DFC2F7DFBB1001D6A89 /* TaskDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailView.swift; sourceTree = "<group>"; };
 		CB189DFF2F7DFE2D001D6A89 /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColors.swift; sourceTree = "<group>"; };
+		CB6033CD2F9746B90095B158 /* LoginView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		CB6033CF2F9746D50095B158 /* AuthViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		CBADA39A2F8F586200A5313A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -43,6 +48,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CBADA3A32F8F618B00A5313A /* FirebaseFirestore in Frameworks */,
+				CB602D8C2F9741C60095B158 /* FirebaseAuth in Frameworks */,
 				CBADA3A52F8F618B00A5313A /* FirebaseFirestoreSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -93,6 +99,7 @@
 		CB189DF02F7DF8C0001D6A89 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				CB6033CD2F9746B90095B158 /* LoginView.swift */,
 				CB189DE42F7DF7B3001D6A89 /* ContentView.swift */,
 				CB189DF82F7DF927001D6A89 /* TaskRowView.swift */,
 				CB189DFA2F7DF932001D6A89 /* AddTaskView.swift */,
@@ -120,6 +127,7 @@
 		CB189DF32F7DF8EA001D6A89 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				CB6033CF2F9746D50095B158 /* AuthViewModel.swift */,
 				CB189DF62F7DF917001D6A89 /* TodoViewModel.swift */,
 			);
 			path = ViewModels;
@@ -159,6 +167,7 @@
 			packageProductDependencies = (
 				CBADA3A22F8F618B00A5313A /* FirebaseFirestore */,
 				CBADA3A42F8F618B00A5313A /* FirebaseFirestoreSwift */,
+				CB602D8B2F9741C60095B158 /* FirebaseAuth */,
 			);
 			productName = "to-do-list";
 			productReference = CB189DDF2F7DF7B3001D6A89 /* to-do-list.app */;
@@ -218,9 +227,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CB6033D02F9746D50095B158 /* AuthViewModel.swift in Sources */,
 				CB189DFD2F7DFBB1001D6A89 /* TaskDetailView.swift in Sources */,
 				CB189DF92F7DF927001D6A89 /* TaskRowView.swift in Sources */,
 				CB189DF72F7DF917001D6A89 /* TodoViewModel.swift in Sources */,
+				CB6033CE2F9746B90095B158 /* LoginView.swift in Sources */,
 				CB189DE52F7DF7B3001D6A89 /* ContentView.swift in Sources */,
 				CB189DFB2F7DF932001D6A89 /* AddTaskView.swift in Sources */,
 				CB189E002F7DFE2D001D6A89 /* AppColors.swift in Sources */,
@@ -437,6 +448,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CB602D8B2F9741C60095B158 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CBADA3A12F8F618B00A5313A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
 		CBADA3A22F8F618B00A5313A /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CBADA3A12F8F618B00A5313A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

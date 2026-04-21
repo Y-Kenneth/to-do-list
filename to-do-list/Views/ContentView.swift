@@ -1,9 +1,11 @@
 import SwiftUI
 
 struct ContentView: View {
+    @ObservedObject var authViewModel: AuthViewModel
     @StateObject private var viewModel = TodoViewModel()
     @State private var showAddSheet    = false
     @State private var showSortMenu    = false
+    @State private var showLogoutAlert = false
 
     var body: some View {
         NavigationView {
@@ -21,22 +23,34 @@ struct ContentView: View {
                     taskList
                 }
 
-                // Floating Action Button
-                fabButton
-                    .padding(.trailing, 24)
-                    .padding(.bottom, 32)
+                // Floating Action Button — only show if user has at least one task
+                if !viewModel.items.isEmpty {
+                    fabButton
+                        .padding(.trailing, 24)
+                        .padding(.bottom, 32)
+                }
             }
             .navigationBarHidden(true)
             .onAppear {
                 viewModel.startListening()
             }
-            .onDisappear {
-                viewModel.stopListening()
+            // Restart listener whenever user changes (login/logout)
+            .onChange(of: authViewModel.user?.uid) { _ in
+                viewModel.startListening()
             }
         }
         .navigationViewStyle(.stack)
         .sheet(isPresented: $showAddSheet) {
             AddTaskView(viewModel: viewModel)
+        }
+        .alert("Sign Out", isPresented: $showLogoutAlert) {
+            Button("Sign Out", role: .destructive) {
+                viewModel.stopListening()
+                authViewModel.signOut()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Are you sure you want to sign out?")
         }
     }
 
@@ -51,6 +65,13 @@ struct ContentView: View {
                 Text("My Tasks")
                     .font(.system(size: 30, weight: .bold, design: .rounded))
                     .foregroundColor(Color.appTitle)
+                if let email = authViewModel.user?.email {
+                    Text(email)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(Color.appAccent)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                }
             }
             Spacer()
 
@@ -77,6 +98,21 @@ struct ContentView: View {
                     Image(systemName: "arrow.up.arrow.down")
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(Color.appAccent)
+                }
+            }
+
+            // Logout button
+            Button {
+                showLogoutAlert = true
+            } label: {
+                ZStack {
+                    Circle()
+                        .fill(Color.appCardBackground)
+                        .frame(width: 40, height: 40)
+                        .shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 2)
+                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(Color.priorityHigh)
                 }
             }
         }
@@ -249,7 +285,6 @@ struct ContentView: View {
                 )
             }
         }
-        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: listItems)
     }
 
     private func bindingFor(_ item: TodoItem) -> Binding<TodoItem> {
@@ -338,9 +373,9 @@ struct ContentView: View {
             return "Try a different search term"
         }
         switch viewModel.activeFilter {
-        case .all:       return "Tap the button below to add your first task"
-        case .pending:   return "You've completed everything — great job!"
-        case .completed: return "Complete tasks to see them here"
+            case .all:       return "Tap the button below to add your first task"
+            case .pending:   return "You've completed everything — great job!"
+            case .completed: return "Complete tasks to see them here"
         }
     }
 
@@ -373,9 +408,9 @@ struct ContentView: View {
     private func greetingText() -> String {
         let hour = Calendar.current.component(.hour, from: Date())
         switch hour {
-        case 0..<12:  return "Good morning"
-        case 12..<17: return "Good afternoon"
-        default:      return "Good evening"
+            case 0..<12:  return "Good morning"
+            case 12..<17: return "Good afternoon"
+            default:      return "Good evening"
         }
     }
 }
